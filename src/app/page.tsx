@@ -1,96 +1,53 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useState } from 'react';
 
-export default function Home() {
+export default function SendData() {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await fetch('https://script.google.com/macros/s/AKfycbxW1j6tNkfn-fZN_F9h9eKuN_t3b-dLWG82h-gHhSBNLCo8AaJWv3O2uMxzU8Ecwlsp9w/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors', // 不透明レスポンスになる
+        body: JSON.stringify(formData),
+      });
+      // レスポンスの確認はできないので、成功したと仮定
+      alert('メッセージを送信しました！');
+    } catch (error) {
+      console.error('エラーが発生しました:', error);
+      alert('送信に失敗しました。');
+    }
+    // const response = await fetch('https://script.google.com/macros/s/AKfycbxW1j6tNkfn-fZN_F9h9eKuN_t3b-dLWG82h-gHhSBNLCo8AaJWv3O2uMxzU8Ecwlsp9w/exec', { // GAS の URL
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   mode: 'no-cors',
+    //   body: JSON.stringify(formData),
+    // });
+    
+    // const result = await response.json();
+    // if (result.status === 'success') {
+    //   alert('データを送信しました！');
+    // } else {
+    //   alert('エラーが発生しました: ' + result.message);
+    // }
+  };
+  
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="name" placeholder="名前" onChange={handleChange} required />
+      <input type="email" name="email" placeholder="メール" onChange={handleChange} required />
+      <textarea name="message" placeholder="メッセージ" onChange={handleChange} required />
+      <button type="submit">送信</button>
+    </form>
   );
 }
